@@ -23,50 +23,69 @@ function addSvg(config, container){
 	.attr("width", config.svgDims.svgWidth);
 }
 
-function drawRects(svg, arr, level, start, end, config){
-	if(!arr.length){
-		return;
-	}
-	
+    function generateGs(svg, arr, level, config) {
 	arr.forEach(function(item){
-		var x = (item.startDate - config.dates.minDate) * config.scale;
-		var y = level * config.barHeight;
-		var barWidth = item.inclusiveTime * config.scale;
-		var opacity = item.exclusiveTime / config.maxTimes.exclusive;
-		
-		svg.append("rect")
-		.attr("x", x)
-		.attr("y", y)
-		.attr("width", barWidth)
-		.attr("height", config.barHeight)
-		.attr("style", "fill:rgb(255,0,0);opacity:" + opacity)
-            .attr("label", item.label)
-            .attr("stroke-width", 2)
-            .attr("stroke", "black");
-        svg.append("text")
-            .text(function () {
-
-                return item.label;
-            }).attr("x", function () {
-                return (x + barWidth / 2) - 6;
+        var x = (item.startDate - config.dates.minDate) * config.scale,
+            y = level * config.barHeight;
+        svg.append("g")
+            .attr("transform", function (d, i) {
+                return "translate(" + x + "," + y + ")";
             })
-            .attr("y", function () {
-                return (y + config.barHeight / 2) + 5;
-            });
-		if(item.children && item.children.length){
-			drawRects(svg, item.children, level + 1, x, x + barWidth, config);
+            .datum({
+                exclusiveTime: item.exclusiveTime,
+                inclusiveTime: item.inclusiveTime
+            })
+            .attr("label", item.label);
+
+
+        if(item.children && item.children.length){
+            generateGs(svg, item.children, level + 1, config);
 		}
 	});
-}
 
 
-function plotGraph(){
+    }
+
+    function generateRect(svg, config) {
+        svg.selectAll("g")
+            .append("rect")
+            .each(function () {
+                var data = d3.select(this.parentNode).datum(),
+                    opacity = data.exclusiveTime / config.maxTimes.exclusive,
+                    barWidth = data.inclusiveTime * config.scale;
+                d3.select(this).attr("style", "fill:rgb(255,0,0);opacity:" + opacity);
+                d3.select(this).attr("width", barWidth);
+            })
+            .attr("height", config.barHeight)
+            .attr("stroke-width", config.strokeWidth)
+            .attr("stroke", config.strokeColour);
+    }
+
+    function generateLabels(svg, config) {
+        svg.selectAll("g")
+            .append("text")
+            .text(function () {
+                var dParentNode = d3.select(this.parentNode),
+                    boundingBox = dParentNode.node().getBBox(),
+                    midWidth = boundingBox.width / 2,
+                    midHeight = boundingBox.height / 2;
+                d3.select(this).attr("x", midWidth);
+                d3.select(this).attr("y", midHeight);
+                d3.select(this).attr("dy", config.textMiddle);
+                d3.select(this).attr("text-anchor", "middle");
+                return dParentNode.attr("label");
+            });
+    }
+
+    function plotGraph(){
 	var tree = flame.makeTree(flame.sampleData);
 	var config = flame.getConfig(tree);
 	var container = initContainer(config);
 	var svg = addSvg(config, container);
-	drawRects(svg, tree, 0, 0, config.svgDims.svgWidth, config);
-}
+        generateGs(svg, tree, 0, config);
+        generateRect(svg, config);
+        generateLabels(svg, config);
+    }
 
 
 $(plotGraph);
