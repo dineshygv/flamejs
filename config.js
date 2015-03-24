@@ -8,7 +8,10 @@ var config = {
 			right: 20
 		},
 		zoom: 1,
-		barHeight : 20
+    barHeight: 20,
+    textMiddle: "0.35em",
+    strokeWidth: 2,
+    strokeColour: "black"
 	};
 	
 function getMaxTimes(tree){
