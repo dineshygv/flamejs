@@ -40,8 +40,19 @@ function drawRects(svg, arr, level, start, end, config){
 		.attr("width", barWidth)
 		.attr("height", config.barHeight)
 		.attr("style", "fill:rgb(255,0,0);opacity:" + opacity)
-		.attr("label", item.label);
-		
+            .attr("label", item.label)
+            .attr("stroke-width", 2)
+            .attr("stroke", "black");
+        svg.append("text")
+            .text(function () {
+
+                return item.label;
+            }).attr("x", function () {
+                return (x + barWidth / 2) - 6;
+            })
+            .attr("y", function () {
+                return (y + config.barHeight / 2) + 5;
+            });
 		if(item.children && item.children.length){
 			drawRects(svg, item.children, level + 1, x, x + barWidth, config);
 		}
