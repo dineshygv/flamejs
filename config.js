@@ -11,7 +11,8 @@ var config = {
     barHeight: 20,
     textMiddle: "0.35em",
     strokeWidth: 2,
-    strokeColour: "black"
+    strokeColour: "black",
+    tooltipAdjustment: 10
 	};
 	
 function getMaxTimes(tree){

@@ -8,3 +8,24 @@
 	overflow: auto;
 }
 
+.popover {
+    position: absolute;
+    max-width: 200px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #ffffff;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    border: 1px solid rgba(0, 0, 0, .2);
+}
+
+.popover-title {
+    padding: 8px 14px;
+    font-size: 14px;
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.popover-content {
+    box-sizing: border-box;
+    padding: 5px;
+    font-size: 12px;
+}

@@ -32,11 +32,10 @@ function addSvg(config, container){
                 return "translate(" + x + "," + y + ")";
             })
             .datum({
+                label: item.label,
                 exclusiveTime: item.exclusiveTime,
                 inclusiveTime: item.inclusiveTime
-            })
-            .attr("label", item.label);
-
+            });
 
         if(item.children && item.children.length){
             generateGs(svg, item.children, level + 1, config);
@@ -77,6 +76,48 @@ function addSvg(config, container){
             });
     }
 
+    function generateTooltips(svg, config) {
+        var tooltip = d3.select(".popover")
+                .style("opacity", 0),
+            title = d3.select(".popover-title"),
+            content = d3.select(".popover-content");
+        svg.selectAll("g").each(function () {
+            var dNode = d3.select(this),
+                datum = dNode.datum(),
+                boundingBox = dNode.node().getBBox(),
+                midWidth = boundingBox.width / 2,
+                midHeight = boundingBox.height / 2,
+                tooltipRendered = false;
+            dNode.on("mouseenter", function (d) {
+                if (!tooltipRendered) {
+                    tooltip
+                        .style("display", "block")
+                        .transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    tooltipRendered = true;
+                }
+
+            })
+            dNode.on("mousemove", function (d) {
+                if (tooltipRendered) {
+                    title.html(datum.label);
+                    content.html("<span> Exclusive Time " + datum.exclusiveTime + "</span><br/>" +
+                            "<span> Inclusive Time " + datum.inclusiveTime + "</span>"
+                    );
+
+                    tooltip.style("left", (d3.event.pageX + coonfig.tooltipAdjustment) + "px")
+                        .style("top", (d3.event.pageY - midHeight) + "px");
+                }
+            })
+            dNode.on("mouseleave", function () {
+                tooltip.transition()
+                    .style("opacity", .1)
+                    .style("display", "none")
+                tooltipRendered = false;
+            });
+        })
+    }
     function plotGraph(){
 	var tree = flame.makeTree(flame.sampleData);
 	var config = flame.getConfig(tree);
@@ -85,6 +126,7 @@ function addSvg(config, container){
         generateGs(svg, tree, 0, config);
         generateRect(svg, config);
         generateLabels(svg, config);
+        generateTooltips(svg);
     }
 
 
