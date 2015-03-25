@@ -106,7 +106,7 @@ function addSvg(config, container){
                             "<span> Inclusive Time " + datum.inclusiveTime + "</span>"
                     );
 
-                    tooltip.style("left", (d3.event.pageX + coonfig.tooltipAdjustment) + "px")
+                    tooltip.style("left", (d3.event.pageX + config.tooltipAdjustment) + "px")
                         .style("top", (d3.event.pageY - midHeight) + "px");
                 }
             })
@@ -126,7 +126,7 @@ function addSvg(config, container){
         generateGs(svg, tree, 0, config);
         generateRect(svg, config);
         generateLabels(svg, config);
-        generateTooltips(svg);
+        generateTooltips(svg, config);
     }
 
 
