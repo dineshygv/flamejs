@@ -50,9 +50,13 @@ function addSvg(config, container){
             .append("rect")
             .each(function () {
                 var data = d3.select(this.parentNode).datum(),
-                    opacity = data.exclusiveTime / config.maxTimes.exclusive,
+                    scale = ((data.exclusiveTime / config.maxTimes.exclusive) * 255) % 255,
                     barWidth = data.inclusiveTime * config.scale;
-                d3.select(this).attr("style", "fill:rgb(255,0,0);opacity:" + opacity);
+                if (data.inclusiveTime < 0) {
+                    console.log("hello");
+                }
+                console.log(scale);
+                d3.select(this).attr("style", "fill:rgb(255," + 255 / scale + ",0);");
                 d3.select(this).attr("width", barWidth);
             })
             .attr("height", config.barHeight)
@@ -100,6 +104,7 @@ function addSvg(config, container){
 
             })
             dNode.on("mousemove", function (d) {
+                datum.exclusiveTime = datum.exclusiveTime || datum.inclusiveTime;
                 if (tooltipRendered) {
                     title.html(datum.label);
                     content.html("<span> Exclusive Time " + datum.exclusiveTime + "</span><br/>" +
@@ -120,7 +125,7 @@ function addSvg(config, container){
     }
     function plotGraph(){
 	var tree = flame.makeTree(flame.sampleData);
-	var config = flame.getConfig(tree);
+        var config = flame.getConfig(tree);
 	var container = initContainer(config);
 	var svg = addSvg(config, container);
         generateGs(svg, tree, 0, config);

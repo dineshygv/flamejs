@@ -10,7 +10,16 @@ function sortByStartDate(inArray){
 	}
 }
 
-function getDate(dateString){
+    function getDateComparison(dateString1, dateString2) {
+        var d1 = getDate(dateString1).getTime(),
+            d2 = getDate(dateString2).getTime();
+        return {
+            greater: Math.max(d1, d2),
+            smaller: Math.min(d1, d2)
+        }
+    }
+
+    function getDate(dateString){
 	if(dateString){
 		var dateObj = new Date(dateString);
 		if(!isNaN(dateObj.getTime())){
@@ -24,17 +33,17 @@ function convertDates(inArray){
 	var outArray = [];
 	if(inArray.length){
 		inArray.forEach(function(item){
-			var startDate = getDate(item.startDate);
-			var endDate = getDate(item.endDate);
+            var dates = getDateComparison(item.startDate, item.endDate)
 			var label = item.label || "";
-			if(startDate && endDate){
+            if (dates.greater && dates.smaller && dates.greater !== dates.smaller) {
 				var dataItem = {
-					startDate : startDate,
-					endDate : endDate,
-					label : label,
-					inclusiveTime : endDate - startDate
+                    startDate: dates.smaller,
+                    endDate: dates.greater,
+                    label: label,
+                    inclusiveTime: dates.greater - dates.smaller
 				};
-				outArray.push(dataItem);
+
+                outArray.push(dataItem);
 			}
 		});
 	}
@@ -50,10 +59,19 @@ function getTotalTime(arr){
 	if(!arr.length){
 		return 0;
 	}
-	
-	var sum = 0;
-	arr.forEach(function(item){
-		sum += item.inclusiveTime;
+
+    var sum = 0, currentTime;
+    arr.sort(function endTime(a, b) {
+        return a.endTime - b.endTime;
+    });
+    arr.forEach(function (item) {
+        if (!currentTime) {
+            sum = sum + item.inclusiveTime;
+            currentTime = item.inclusiveTime;
+        } else if (currentTime < item.endTime) {
+            sum += item.endTime - currentTime;
+            currentTime = item.endTime;
+        }
 	});
 	return sum;
 }
@@ -91,6 +109,10 @@ function constructTree(arr){
 			parent.children = constructTree(parent.children);			
 		}
 		parent.exclusiveTime = parent.inclusiveTime - getTotalTime(parent.children);
+
+        if (parent.exclusiveTime < 0) {
+            debugger;
+        }
 	});
 	
 	return parents;

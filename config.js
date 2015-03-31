@@ -10,8 +10,8 @@ var config = {
 		zoom: 1,
     barHeight: 20,
     textMiddle: "0.35em",
-    strokeWidth: 2,
-    strokeColour: "black",
+    strokeWidth: 1,
+    strokeColour: "white",
     tooltipAdjustment: 10
 	};
 	
