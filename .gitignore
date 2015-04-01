@@ -1,0 +1,3 @@
+mdsDataGenerator/node_modules
+mdsDataGenerator/*.json
+mdsDataGenerator/*.csv
