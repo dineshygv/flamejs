@@ -1,0 +1,16 @@
+{
+  "name": "mdsDataGenerator",
+  "version": "1.0.0",
+  "description": "converts mds files to json files for flame js",
+  "main": "make.js",
+  "dependencies": {
+    "csvtojson": "^0.3.19",
+    "underscore": "^1.8.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dinesh ygv",
+  "license": "ISC"
+}

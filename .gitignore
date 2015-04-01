@@ -1,3 +1,4 @@
 mdsDataGenerator/node_modules
 mdsDataGenerator/*.json
+!mdsDataGenerator/package.json
 mdsDataGenerator/*.csv
