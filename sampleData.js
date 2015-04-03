@@ -2277,7 +2277,7 @@ var sampleData = [{
         Tag : null,
         OrigTS : '2015/03/24 15:32:06.592',
         StartTime : '0001-01-01T05:30:00.0000000+05:30',
-        label : 'ReferenceDataRepository-GetAdPlacementsByAdFormat',
+    label: 'ReferenceDataRepository-GetAdPlacementsByAdFormat1',
         startDate : '2015-03-24T21:02:05.1946257+05:30',
         endDate : '2015-03-24T21:02:05.2228860+05:30'
     }, {

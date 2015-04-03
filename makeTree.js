@@ -82,16 +82,18 @@ function constructTree(arr){
 	}
 	
 	var parents = [];
-	
-	arr.forEach(function(item){
+
+    arr.forEach(function (item, arrIndex) {
 			
 		var foundParent = false;
 		
 		if(parents.length){
 			parents.forEach(function(parent){
-				if(isChild(parent, item)){
-					parent.children.push(item);
-					foundParent = true;
+
+                if(isChild(parent, item)){
+                    parent.children.push(item);
+                    arr.splice(arrIndex, 1);
+                    foundParent = true;
 					return false;
 				}
 			});
@@ -103,8 +105,8 @@ function constructTree(arr){
 		}
 		
 	});
-	
-	parents.forEach(function(parent){
+
+    parents.forEach(function(parent){
 		if(parent.children.length > 1){
 			parent.children = constructTree(parent.children);			
 		}
@@ -121,7 +123,11 @@ function constructTree(arr){
 function makeTree(sampleData){
 	var datedArray = convertDates(sampleData);
 	sortByStartDate(datedArray);
+    datedArray.forEach(function (data, index) {
+        data.index = index;
+    })
 	var tree = constructTree(datedArray);
+    debugger;
 	return tree;
 }
 
