@@ -24,7 +24,7 @@ function addSvg(config, container){
 }
 
     function generateGs(svg, arr, level, config) {
-	arr.forEach(function(item){
+        arr.forEach(function (item) {
         var x = (item.startDate - config.dates.minDate) * config.scale,
             y = level * config.barHeight;
         svg.append("g")
@@ -32,6 +32,7 @@ function addSvg(config, container){
                 return "translate(" + x + "," + y + ")";
             })
             .datum({
+                index: item.index,
                 label: item.label,
                 exclusiveTime: item.exclusiveTime,
                 inclusiveTime: item.inclusiveTime
@@ -50,13 +51,18 @@ function addSvg(config, container){
             .append("rect")
             .each(function () {
                 var data = d3.select(this.parentNode).datum(),
-                    scale = ((data.exclusiveTime / config.maxTimes.exclusive) * 255) % 255,
+                    scale = (data.exclusiveTime / config.maxTimes.exclusive),
                     barWidth = data.inclusiveTime * config.scale;
                 if (data.inclusiveTime < 0) {
                     console.log("hello");
                 }
-                console.log(scale);
-                d3.select(this).attr("style", "fill:rgb(255," + 255 / scale + ",0);");
+                if (isNaN(scale)) {
+                    scale = 1;
+                    console.log(data.label, data.index);
+                }
+                scale = scale || 1;
+                console.log(data.index, scale, Math.floor(255 - 255 * scale), "max time: ", config.maxTimes.exclusive, "exclusiveTime", data.exclusiveTime);
+                d3.select(this).attr("style", "fill:rgb(255," + Math.floor(255 - 255 * scale) + ",0);");
                 d3.select(this).attr("width", barWidth);
             })
             .attr("height", config.barHeight)
@@ -108,7 +114,8 @@ function addSvg(config, container){
                 if (tooltipRendered) {
                     title.html(datum.label);
                     content.html("<span> Exclusive Time " + datum.exclusiveTime + "</span><br/>" +
-                            "<span> Inclusive Time " + datum.inclusiveTime + "</span>"
+                            "<span> Inclusive Time " + datum.inclusiveTime + "</span><br/>" +
+                            "<span>Index : </span>" + datum.index
                     );
 
                     tooltip.style("left", (d3.event.pageX + config.tooltipAdjustment) + "px")
